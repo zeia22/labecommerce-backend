@@ -1,15 +1,15 @@
 // estamos dentro do arquivo src/types.ts tipando um vídeo do youtube
 
 export type Users = {
-    id: number,
+    id: string,
     name: string,
     email: string,
     password: string,
-    createdAt: string;
+    
   }
 
   export type Products = {
-    id: number;
+    id: string;
     name: string;
     price: string;
     description: string;
