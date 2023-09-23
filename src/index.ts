@@ -65,3 +65,35 @@ app.get('/ping', (req: Request, res: Response) => {
         users.push(newUsers)
         res.status(200).send('Usuário registrado com sucesso');
       });
+
+      app.delete('/users/:id', (req: Request, res: Response) => {
+        const userDelete = req.params.id
+
+        const idIndex = users.findIndex((usua)=> usua.id === userDelete)
+
+        if(idIndex !== -1){
+            users.splice(idIndex, 1)
+        }
+        res.status(200).send("Item deletado com sucesso")
+      });
+
+      app.put('/products/:id', (req: Request, res: Response) => {
+        const productID = req.params.id
+        const newId = req.body.id as string | undefined
+        const newName = req.body.id as string | undefined
+        const newPrice = req.body.id as string | undefined
+        const newDescription = req.body.id as string | undefined
+        const newImageUrl = req.body.id as string | undefined
+
+        const produtos = products.find((prod) => prod.id === productID)
+        if(produtos){
+            produtos.id = newId || produtos.id
+            produtos.name = newId || produtos.name
+            produtos.price = newId || produtos.price
+            produtos.description = newId || produtos.description 
+            produtos.imageUrl = newId || produtos.imageUrl
+
+            // produtos.price = isNaN(Number(newPrice))? produtos.price : newPrice as number
+        }
+        res.status(200).send("Atualização realizada com sucesso")
+      });
