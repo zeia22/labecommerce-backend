@@ -29,8 +29,23 @@ app.get('/ping', (req: Request, res: Response) => {
 //  console.log(nomeSearch);
 
  app.get('/users', (req: Request, res: Response) => {
-    const result: Users[] = users
-    res.status(200).send(result)
+    try {
+        const result: Users[] = users
+
+        if(!result){
+            throw new Error("Deu erro")
+        }
+        res.status(200).send(result)
+        
+    } catch (error) {
+        if(error instanceof Error){
+
+            res.send(error.message)
+        }
+      
+    }
+    
+    
   });
  app.get('/products', (req: Request, res: Response) => {
     const nameProduct= req.query.name as string
@@ -66,34 +81,54 @@ app.get('/ping', (req: Request, res: Response) => {
         res.status(200).send('Usuário registrado com sucesso');
       });
 
-      app.delete('/users/:id', (req: Request, res: Response) => {
-        const userDelete = req.params.id
-
-        const idIndex = users.findIndex((usua)=> usua.id === userDelete)
-
-        if(idIndex !== -1){
-            users.splice(idIndex, 1)
+      app.delete('/users/:id', (req: Request, res: Response): void => {
+        try {
+            
+            const userDelete: string = req.params.id
+    
+            const idIndex: number = users.findIndex((usua)=> usua.id === userDelete)
+    
+            if(idIndex !== -1){
+                users.splice(idIndex, 1)
+            }
+            res.status(200).send("Item deletado com sucesso")
+        } catch (error) {
+            if(error instanceof Error){
+                res.send(error.message)
+            }
         }
-        res.status(200).send("Item deletado com sucesso")
       });
 
       app.put('/products/:id', (req: Request, res: Response) => {
-        const productID = req.params.id
+        try {
+            const productID = req.params.id
         const newId = req.body.id as string | undefined
         const newName = req.body.id as string | undefined
         const newPrice = req.body.id as string | undefined
         const newDescription = req.body.id as string | undefined
         const newImageUrl = req.body.id as string | undefined
 
+        if(typeof newPrice !== 'number' ){
+            res.status(404)
+            throw new Error("'newType' deve ser do tipo 'number'")
+        }
+
         const produtos = products.find((prod) => prod.id === productID)
         if(produtos){
             produtos.id = newId || produtos.id
-            produtos.name = newId || produtos.name
-            produtos.price = newId || produtos.price
-            produtos.description = newId || produtos.description 
-            produtos.imageUrl = newId || produtos.imageUrl
+            produtos.name = newName || produtos.name
+            produtos.price = newPrice || produtos.price
+            produtos.description = newDescription || produtos.description 
+            produtos.imageUrl = newImageUrl || produtos.imageUrl
 
             // produtos.price = isNaN(Number(newPrice))? produtos.price : newPrice as number
         }
         res.status(200).send("Atualização realizada com sucesso")
+            
+        } catch (error) {
+            if(error instanceof Error){
+                res.send(error.message)
+        }
+    }
+        
       });
