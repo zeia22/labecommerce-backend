@@ -9,6 +9,8 @@ CREATE TABLE users(
     --created_at Date('now')
 );
 
+
+
 DROP TABLE users;
 
 SELECT * FROM users;
@@ -57,7 +59,7 @@ UPDATE products
 SET price=89, description='Black Jeans';
 
 CREATE TABLE products(
-    id TEXT PK UNIQUE NOT NULL,
+    id TEXT PRIMARY KEY UNIQUE NOT NULL,
     name TEXT NOT NULL,
     price REAL NOT NULL,
     description TEXT NOT NULL,
@@ -76,5 +78,88 @@ SELECT * FROM products;
 
 DELETE FROM products;
 
+DROP TABLE products;
+
+--Exercício 1
+--Agora que sabemos como implementar relações do tipo 1:m e 1:1, vamos refatorar a estrutura do Labecommerce!
+--Por ora não precisaremos editar as tabelas já existentes (users e products). Nosso objetivo hoje é criar a tabela de pedidos (purchases).
+
+CREATE TABLE purchases(
+    id TEXT PRIMARY KEY UNIQUE NOT NULL,
+    buyer TEXT NOT NULL,
+    total_price REAL NOT NULL,
+    created_ad TEXT NOT NULL,
+    FOREIGN KEY (buyer) REFERENCES users(id)
+);
+
+
+SELECT * FROM purchases;
+
+--Exercício 2
+
+-- a) Crie um pedido para cada pessoa cadastrada
+-- no mínimo 2 no total (ou seja, na tabela users deve existir pelo menos 2 pessoas diferentes)
+-- escolha um valor aleatório para o preço total do pedido e a data em texto
+
+
+
+INSERT INTO purchases(id,buyer,total_price,created_ad)
+VALUES ('U001','01', 100, DATETIME());
+
+INSERT INTO purchases(id, buyer, total_price, created_ad)
+VALUES('U002', '02', 150, '2023-10-07');
+INSERT INTO purchases(id, buyer, total_price, created_ad)
+VALUES('U003', '03', 190, '2023-10-07');
+
+-- b) Edite o preço total do pedido (só pra praticar)
+-- simule que o pedido foi alterado e o preço total diminuiu ou aumentou
+
+UPDATE purchases 
+SET total_price = total_price + 20
+WHERE id='U001';
+
+-- Exercício 3
+-- Crie a query de consulta utilizando junção (SELECT com JOIN) para simular um endpoint de informações de uma compra específica.
+
+DROP TABLE purchases;
+
+
+
+SELECT 
+users.id AS UsuarioId, purchases.id AS purchasesId, users.name AS nome, users.email AS email, purchases.total_price AS preço_total, purchases.created_ad AS Data
+ FROM purchases
+INNER JOIN users
+ON purchases.buyer_id = users.id ;
+-- a relação fica na coluna creator_id da tabela recipes,
+-- que referencia a coluna id da tabela users
+
+--relacoes-sql-II-exercicios
+--exercicio1.md
+
+CREATE TABLE purchases_products(
+    purchases_id TEXT NOT NULL,
+    product_id TEXT NOT NULL,
+    quantity INT NOT NULL ,
+    FOREIGN KEY (purchases_id ) REFERENCES purchases(id),
+    FOREIGN KEY (product_id ) REFERENCES products(id)
+    ON UPDATE CASCADE
+    ON DELETE CASCADE
+    );
+
+    INSERT INTO purchases_products
+    VALUES
+    ('1', '4', 4 ), ('2', '2', 5), ('3', '3', 7);
+
+    SELECT
+    PP.purchases_id,
+    PP.product_id,
+    PP.quantity,
+    c.buyer_id,
+    c.total_price FROM purchases_products AS PP
+    INNER JOIN PURCHASES AS C ON PP.purchases_id = C.id
+    INNER JOIN products AS P ON PP.product_id = P.id;
+SELECT * FROM purchases_products;
+
+DROP TABLE purchases_products;
 
 
